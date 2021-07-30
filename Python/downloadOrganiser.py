@@ -1,12 +1,16 @@
 import os
 import json
 
+#File Organising Map with Folder as key and file extensions as values
 filesTypes={"Images":["jpg","png","gif","jpeg"],
             "Extracts":["rar","zip"],
             "Videos":["mp4","avi","m4a"],
             "Docs":["docx","ppt","pptx","xml","csv","xlsx","doc"],
             "Pdfs":["pdf"],
             "Unknowns":[""]}
+
+
+#Loading Users Config if exists
 if os.path.exists("filesTypes.json"):
     with open("filesTypes.json","r") as config:
         filesTypes = json.load(config)
@@ -29,5 +33,6 @@ for file in os.listdir("./"):
         if not fileMove:
             os.replace(file,"./Unknowns/"+file)
 
+#saving config
 with open("filesTypes.json","w") as config:
     json.dump(filesTypes,config,indent=3)
