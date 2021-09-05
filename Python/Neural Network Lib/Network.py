@@ -1,5 +1,7 @@
 import numpy as np
 import json
+from Layers import Dense
+import logging
 
 
 def mse(y_true, y_pred):
@@ -32,9 +34,9 @@ class NeuralNetwork:
         for layer in reversed(self.layers):
             grad = layer.backword(grad, self.learning_rate)
 
-    def save(self):
-        dic = {"Layer Count:":len(self.layers),
-               "Learning Rate:":self.learning_rate}
+    def save(self,path="./network.json"):
+        dic = {"Layer Count":len(self.layers),
+               "Learning Rate":self.learning_rate}
         layer_counter=0
         for layer in self.layers:
             d = layer.to_json()
@@ -44,3 +46,17 @@ class NeuralNetwork:
         op_file=open("network.json","w")
         json.dump(dic,op_file,indent=3)
         op_file.close()
+    
+    def load(self,path="./network.json"):
+        with open(path,'r') as target:
+            data= json.load(target)
+        layer_counter = data["Layer Count"]
+        self.layers = []
+        for i in range(layer_counter):
+            layer_data = data[f"Layer {i+1}"]
+            if layer_data["type"]=="Dense":
+                layer = Dense(1,2)
+                layer.from_json(layer_data)
+            self.layers.append(layer)
+        logging.debug("Network Loaded")
+        

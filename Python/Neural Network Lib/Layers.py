@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 #Constants 
 TANH="tanh"
@@ -42,13 +43,21 @@ class Layer:
         self.output_nodes = None
         self.inputs = None
         self.outputs = None
+        self.type = "Layer"
 
     def forword(self, inputs):
         pass
 
     def backword(self, output_gradient, learning_rate):
         pass
+    def to_json(self):
+        pass
+    
+    def mutate(self):
+        pass
 
+    def crossover(self):
+        pass
 
 class Dense(Layer):
     def __init__(self, input_nodes, output_nodes, activation_function=SIGMOID):
@@ -57,6 +66,7 @@ class Dense(Layer):
         self.bias = np.random.randn(output_nodes, 1)
         self.weights = np.random.randn(output_nodes, input_nodes)
         self.activation_function = activation_function
+        self.type = "Dense"
 
     def forword(self, inputs):
         self.inputs = inputs
@@ -74,11 +84,17 @@ class Dense(Layer):
 
     def to_json(self):
         dic = {"activationFunction":self.activation_function,
+               "type": self.type,
                "output_nodes":self.output_nodes,
                "input_nodes":self.input_nodes,
                "weights":self.weights.tolist(),
                "bias":self.bias.tolist()}
         return dic 
 
-d = Dense(4,5)
-print(d.to_json())
+    def from_json(self,data:dict):
+        self.activation_function = data["activationFunction"]
+        self.input_nodes = data["input_nodes"]
+        self.output_nodes = data["output_nodes"]
+        self.bias = np.array(data["bias"])
+        self.weights = np.array(data["weights"])
+        logging.debug("Layer Loaded")
